@@ -17,3 +17,6 @@ Example:
 
 NOTE: This program requires root privileges to run.
 ```
+
+# Installation
+Run ```make install``` to make and install nuke.

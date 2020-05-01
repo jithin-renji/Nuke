@@ -17,5 +17,8 @@ $(BIN): $(OBJS)
 .c.o:
 	$(CC) -Iinclude -c $< -o $@ $(CFLAGS)
 
+install: $(BIN)
+	cp $(BIN) /usr/bin/
+
 clean:
 	rm -f $(OBJS) $(BIN)
