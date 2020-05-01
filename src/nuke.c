@@ -60,7 +60,7 @@ int nuke (const char* drv)
 	
 	fstat(fd_drv, &drv_stat);
 	bs = drv_stat.st_blksize;
-	bytes_drv = bs * nblocks_drv;
+	bytes_drv = 512 * nblocks_drv;
 
 	int cnfrm = confirm(drv);
 

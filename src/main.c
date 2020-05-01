@@ -93,11 +93,14 @@ void usage (const char* progname)
 {
 	printf("Usage: %s <drive 1> [drive 2] ...\n\n", progname);
 
-	printf("Remove the drive of its contents.\n\n");
+	printf("Remove a drive(s) of its contents.\n\n");
 
 	printf("Options:\n"
 	       "\t-h, --help\tDisplay this help and exit\n"
-	       "\t-v, --version\tDisplay version information and exit\n\n");
+	       "\t-v, --version\tDisplay version information and exit\n\n"
+	       "Examples:\n"
+	       "\tnuke /dev/sdb\n"
+	       "\tnuke /dev/sdb /dev/sdc\n\n");
 
 	printf("NOTE: This program requires root privileges to run.\n");
 }
