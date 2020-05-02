@@ -8,6 +8,7 @@ Usage: nuke <drive 1> [drive 2]
 Remove a drive(s) of its contents.
 
 Options:
+	-z, -0, --zero	Don't write random bytes to drive
 	-h, --help	Display this help and exit
 	-V, --version	Display this version information and exit
 

@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <getopt.h>
 
@@ -35,6 +36,7 @@ void usage (const char* progname);
 void version (const char* progname);
 
 struct option long_opt[] = {
+	{"zero",	no_argument,	0, 'z'},
 	{"help", 	no_argument, 	0, 'h'},
 	{"version", 	no_argument, 	0, 'V'},
 	{0,		0,		0,  0}
@@ -49,9 +51,14 @@ int main (int argc, char** argv)
 		exit(EXIT_FAILURE);
 	} else {
 		int opt = 0;
+		int only_zero = 0;
 
-		while ((opt = getopt_long(argc, argv, "hV", long_opt, &opt_index)) != -1) {
+		while ((opt = getopt_long(argc, argv, "z0hV", long_opt, &opt_index)) != -1) {
 			switch (opt) {
+			case '0':
+			case 'z':
+				only_zero = 1;
+				break;
 			case 'h':
 				usage(argv[0]);
 				exit(EXIT_SUCCESS);
@@ -69,6 +76,11 @@ int main (int argc, char** argv)
 
 		char** drvs = argv + optind;
 
+		if (only_zero == 1 && argc < 3) {
+			printf("Please specify at least one drive.\n");
+			exit(EXIT_FAILURE);
+		}
+
 		printf("List of drives to be nuked:\n");
 
 		while (*drvs != NULL) {
@@ -80,7 +92,7 @@ int main (int argc, char** argv)
 
 		srand(time(NULL));
 		while (*drvs != NULL) {
-			int ret = nuke(*drvs);
+			int ret = nuke(*drvs, only_zero);
 			if (ret == -1) {
 				exit(EXIT_FAILURE);
 			}
@@ -98,6 +110,7 @@ void usage (const char* progname)
 	printf("Remove a drive(s) of its contents.\n\n");
 
 	printf("Options:\n"
+	       "\t-z, -0, --zero\tDon't write random bytes to drive\n"
 	       "\t-h, --help\tDisplay this help and exit\n"
 	       "\t-v, --version\tDisplay version information and exit\n\n"
 	       "Examples:\n"

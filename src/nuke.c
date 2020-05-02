@@ -34,7 +34,7 @@
 
 int confirm (const char* drv);
 
-int nuke (const char* drv)
+int nuke (const char* drv, int only_zero)
 {
 	int fd_drv = open(drv, O_RDWR);
 
@@ -66,7 +66,9 @@ int nuke (const char* drv)
 
 	if (cnfrm) {
 		clear_drv (fd_drv, bytes_drv, bs);
-		rand_drv (fd_drv, bytes_drv);
+		if (!only_zero) {
+			rand_drv (fd_drv, bytes_drv);
+		}
 	} else {
 		printf("Aborted.\n");
 	}
