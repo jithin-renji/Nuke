@@ -34,7 +34,7 @@
 
 int confirm (const char* drv);
 
-int nuke (const char* drv, int only_zero)
+int nuke (const char* drv, int only_zero, int nreps)
 {
 	int fd_drv = open(drv, O_RDWR);
 
@@ -65,9 +65,16 @@ int nuke (const char* drv, int only_zero)
 	int cnfrm = confirm(drv);
 
 	if (cnfrm) {
-		clear_drv (fd_drv, bytes_drv, bs);
-		if (!only_zero) {
-			rand_drv (fd_drv, bytes_drv);
+		for (int i = 0; i < nreps; i++) {
+			if (nreps != 1) {
+				printf(B_CYAN "STAGE %d:\n" RESET, i + 1);
+			}
+			clear_drv (fd_drv, bytes_drv, bs);
+
+			if (!only_zero) {
+				rand_drv (fd_drv, bytes_drv, bs);
+				clear_drv (fd_drv, bytes_drv, bs);
+			}
 		}
 	} else {
 		printf("Aborted.\n");
@@ -105,12 +112,12 @@ void clear_drv (int fd_drv, size_t count, size_t bs)
 	long double nbytes_written = 0;
 
 	/* Buffer to store 0's to be written */
-	char buf[512];
+	char buf[bs];
 
 	memset(buf, 0, sizeof(buf));
 
 	while (nbytes_written != count) {
-		int ret = write(fd_drv, buf, 512);
+		int ret = write(fd_drv, buf, bs);
 
 		if (ret == -1) {
 			perror("");
@@ -122,7 +129,7 @@ void clear_drv (int fd_drv, size_t count, size_t bs)
 		/* Hide cursor */
 		fputs("\e[?25l", stdout);
 
-		printf("Clearing %ld byte(s). [%.2Lf%%]\r", count, percent);
+		printf("\tClearing %ld byte(s). [%.2Lf%%]\r", count, percent);
 		fflush(stdout);
 
 		/* Show cursor */
@@ -133,15 +140,18 @@ void clear_drv (int fd_drv, size_t count, size_t bs)
 	printf("\n");
 }
 
-void rand_drv (int fd_drv, size_t count)
+void rand_drv (int fd_drv, size_t count, size_t bs)
 {
 	lseek(fd_drv, 0, SEEK_SET);
 	long double nbytes_written = 0;
-	char buf[1];
+	char buf[bs];
 
 	while (nbytes_written != count) {
-		buf[0] = rand() % 256;
-		int ret = write(fd_drv, buf, 1);
+		for (int i = 0; i < bs; i++) {
+			buf[i] = rand() % 256;
+		}
+
+		int ret = write(fd_drv, buf, bs);
 
 		if (ret == -1) {
 			perror("");
@@ -152,12 +162,12 @@ void rand_drv (int fd_drv, size_t count)
 
 		fputs("\e[?25l", stdout);
 		
-		printf("Writing %ld random byte(s). [%.2Lf%%]\r", count, percent);
+		printf("\tWriting %ld random byte(s). [%.2Lf%%]\r", count, percent);
 		fflush(stdout);
 
 		fputs("\e[?25h", stdout);
 
-		nbytes_written += 1;
+		nbytes_written += bs;
 	}
 	printf("\n");
 }

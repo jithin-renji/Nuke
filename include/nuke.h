@@ -20,8 +20,8 @@
 #ifndef NUKE_H
 #define NUKE_H
 
-int nuke (const char* drv, int only_zero);
+int nuke (const char* drv, int only_zero, int nreps);
 void clear_drv (int fd_drv, size_t count, size_t bs);
-void rand_drv (int fd_drv, size_t count);
+void rand_drv (int fd_drv, size_t count, size_t bs);
 
 #endif	/* NUKE_H */

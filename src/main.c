@@ -36,10 +36,11 @@ void usage (const char* progname);
 void version (const char* progname);
 
 struct option long_opt[] = {
-	{"zero",	no_argument,	0, 'z'},
-	{"help", 	no_argument, 	0, 'h'},
-	{"version", 	no_argument, 	0, 'V'},
-	{0,		0,		0,  0}
+	{"zero",	no_argument,		0, 'z'},
+	{"num-reps",	required_argument,	0, 'n'},
+	{"help", 	no_argument, 		0, 'h'},
+	{"version", 	no_argument, 		0, 'V'},
+	{0,		0,			0,  0}
 };
 
 int opt_index = 0;
@@ -52,12 +53,16 @@ int main (int argc, char** argv)
 	} else {
 		int opt = 0;
 		int only_zero = 0;
+		int nreps = 1;
 
-		while ((opt = getopt_long(argc, argv, "z0hV", long_opt, &opt_index)) != -1) {
+		while ((opt = getopt_long(argc, argv, "z0n:hV", long_opt, &opt_index)) != -1) {
 			switch (opt) {
 			case '0':
 			case 'z':
 				only_zero = 1;
+				break;
+			case 'n':
+				nreps = atoi(optarg);
 				break;
 			case 'h':
 				usage(argv[0]);
@@ -92,7 +97,7 @@ int main (int argc, char** argv)
 
 		srand(time(NULL));
 		while (*drvs != NULL) {
-			int ret = nuke(*drvs, only_zero);
+			int ret = nuke(*drvs, only_zero, nreps);
 			if (ret == -1) {
 				exit(EXIT_FAILURE);
 			}
@@ -111,11 +116,14 @@ void usage (const char* progname)
 
 	printf("Options:\n"
 	       "\t-z, -0, --zero\tDon't write random bytes to drive\n"
+	       "\t-n, --num-reps\tNumber of times to repeat the process (defaults to 1)\n"
 	       "\t-h, --help\tDisplay this help and exit\n"
 	       "\t-v, --version\tDisplay version information and exit\n\n"
 	       "Examples:\n"
 	       "\tnuke /dev/sdb\n"
-	       "\tnuke /dev/sdb /dev/sdc\n\n");
+	       "\tnuke /dev/sdb /dev/sdc\n"
+	       "\tnuke -z /dev/sdb\n"
+	       "\tnuke -n 2 /dev/sdb\n\n");
 
 	printf("NOTE: This program requires root privileges to run.\n");
 }
