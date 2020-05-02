@@ -22,5 +22,6 @@
 
 int nuke (const char* drv);
 void clear_drv (int fd_drv, size_t count, size_t bs);
+void rand_drv (int fd_drv, size_t count);
 
 #endif	/* NUKE_H */

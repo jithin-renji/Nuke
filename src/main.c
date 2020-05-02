@@ -23,6 +23,7 @@
  */
 
 #include <stdio.h>
+#include <time.h>
 #include <stdlib.h>
 
 #include <getopt.h>
@@ -77,6 +78,7 @@ int main (int argc, char** argv)
 		printf("\n");
 		drvs = argv + optind;
 
+		srand(time(NULL));
 		while (*drvs != NULL) {
 			int ret = nuke(*drvs);
 			if (ret == -1) {

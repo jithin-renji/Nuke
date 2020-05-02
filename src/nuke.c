@@ -66,6 +66,7 @@ int nuke (const char* drv)
 
 	if (cnfrm) {
 		clear_drv (fd_drv, bytes_drv, bs);
+		rand_drv (fd_drv, bytes_drv);
 	} else {
 		printf("Aborted.\n");
 	}
@@ -93,6 +94,7 @@ int confirm (const char* drv)
 
 void clear_drv (int fd_drv, size_t count, size_t bs)
 {
+	lseek(fd_drv, 0, SEEK_SET);
 	/*
 		Number of bytes written, is
 		used to calculate the percentage of
@@ -110,7 +112,7 @@ void clear_drv (int fd_drv, size_t count, size_t bs)
 
 		if (ret == -1) {
 			perror("");
-			exit(3);
+			exit(EXIT_FAILURE);
 		}
 		
 		long double percent = (nbytes_written/count) * 100;
@@ -125,6 +127,35 @@ void clear_drv (int fd_drv, size_t count, size_t bs)
 		fputs("\e[?25h", stdout);
 
 		nbytes_written += bs;
+	}
+	printf("\n");
+}
+
+void rand_drv (int fd_drv, size_t count)
+{
+	lseek(fd_drv, 0, SEEK_SET);
+	long double nbytes_written = 0;
+	char buf[1];
+
+	while (nbytes_written != count) {
+		buf[0] = rand() % 256;
+		int ret = write(fd_drv, buf, 1);
+
+		if (ret == -1) {
+			perror("");
+			exit(EXIT_FAILURE);
+		}
+		
+		long double percent = (nbytes_written/count) * 100;
+
+		fputs("\e[?25l", stdout);
+		
+		printf("Writing %ld random byte(s). [%.2Lf%%]\r", count, percent);
+		fflush(stdout);
+
+		fputs("\e[?25h", stdout);
+
+		nbytes_written += 1;
 	}
 	printf("\n");
 }
