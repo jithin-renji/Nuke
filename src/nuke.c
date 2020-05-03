@@ -65,15 +65,16 @@ int nuke (const char* drv, int only_zero, int nreps)
 	int cnfrm = confirm(drv);
 
 	if (cnfrm) {
+		off_t seek_loc = 0;
 		for (int i = 0; i < nreps; i++) {
 			if (nreps != 1) {
 				printf(B_CYAN "STAGE %d:\n" RESET, i + 1);
 			}
-			clear_drv (fd_drv, bytes_drv, bs);
+			clear_drv (fd_drv, bytes_drv, bs, seek_loc);
 
 			if (!only_zero) {
-				rand_drv (fd_drv, bytes_drv, bs);
-				clear_drv (fd_drv, bytes_drv, bs);
+				rand_drv (fd_drv, bytes_drv, bs, seek_loc);
+				clear_drv (fd_drv, bytes_drv, bs, seek_loc);
 			}
 		}
 	} else {
@@ -101,9 +102,9 @@ int confirm (const char* drv)
 	return 0;
 }
 
-void clear_drv (int fd_drv, size_t count, size_t bs)
+void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 {
-	lseek(fd_drv, 0, SEEK_SET);
+	lseek(fd_drv, seek_loc, SEEK_SET);
 	/*
 		Number of bytes written, is
 		used to calculate the percentage of
@@ -140,9 +141,9 @@ void clear_drv (int fd_drv, size_t count, size_t bs)
 	printf("\n");
 }
 
-void rand_drv (int fd_drv, size_t count, size_t bs)
+void rand_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 {
-	lseek(fd_drv, 0, SEEK_SET);
+	lseek(fd_drv, seek_loc, SEEK_SET);
 	long double nbytes_written = 0;
 	char buf[bs];
 

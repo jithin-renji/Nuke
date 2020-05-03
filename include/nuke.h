@@ -20,8 +20,10 @@
 #ifndef NUKE_H
 #define NUKE_H
 
+#include <sys/types.h>
+
 int nuke (const char* drv, int only_zero, int nreps);
-void clear_drv (int fd_drv, size_t count, size_t bs);
-void rand_drv (int fd_drv, size_t count, size_t bs);
+void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc);
+void rand_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc);
 
 #endif	/* NUKE_H */
