@@ -1,6 +1,8 @@
 /* nuke.h: This is the main header */
 
-/*
+/*	
+ *	Copyright (C) 2020 Jithin Renji
+ *
  *	This file is part of Nuke.
  *
  *	Nuke is free software: you can redistribute it and/or modify
