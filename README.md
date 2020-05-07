@@ -2,6 +2,7 @@
 Nuke is a program that can be used to 'nuke' a drive of its contents. It zeroes
 out a given drive and writes random bytes for further data destruction.
 
+NOTE: At the moment, Nuke can only be run on Linux.
 ```
 Usage: nuke <drive 1> [drive 2]
 
