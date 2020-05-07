@@ -52,7 +52,11 @@ int main (int argc, char** argv)
 		exit(EXIT_FAILURE);
 	} else {
 		int opt = 0;
+
+		/* If set, don't write random bytes */
 		int only_zero = 0;
+
+		/* Number of times to repeat the procedure */
 		int nreps = 1;
 
 		while ((opt = getopt_long(argc, argv, "z0n:hV", long_opt, &opt_index)) != -1) {

@@ -67,6 +67,7 @@ int nuke (const char* drv, int only_zero, int nreps)
 	int cnfrm = confirm(drv);
 
 	if (cnfrm) {
+		/* Location to seek to */
 		off_t seek_loc = 0;
 		for (int i = 0; i < nreps; i++) {
 			if (nreps != 1) {
@@ -146,7 +147,10 @@ void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 void rand_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 {
 	lseek(fd_drv, seek_loc, SEEK_SET);
+	/* Same as clear_drv() */
 	long double nbytes_written = 0;
+
+	/* Buffer to store random bytes */
 	char buf[bs];
 
 	while (nbytes_written != count) {
