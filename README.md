@@ -2,7 +2,6 @@
 Nuke is a program that can be used to 'nuke' a drive of its contents. It zeroes
 out a given drive and writes random bytes for further data destruction.
 
-NOTE: At the moment, Nuke can only be run on Linux.
 ```
 Usage: nuke <drive 1> [drive 2]
 
@@ -25,6 +24,6 @@ NOTE: This program requires root privileges to run.
 
 ## Installation
 
-NOTE: At the moment, Nuke can only be installed and run on Linux.
+At the moment, Nuke can only be installed and run on Linux.
 Download the source tree and change to the source directory.
 Run ```make install``` to make and install Nuke.
