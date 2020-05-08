@@ -11,12 +11,15 @@ OBJS = src/main.o \
 UI = ui/Nuke.ui
 PY = Nuke.py
 
+.PHONY: clean
+.SUFFIXES: .o .c
+
 $(BIN): $(OBJS)
 	$(CC) $(OBJS) $(CFLAGS) -o $(BIN)
 	pyuic5 -x $(UI) -o $(PY)
 
-.PHONY: clean
-.SUFFIXES: .o .c
+gui: $(BIN)
+	pyuic5 -x $(UI) -o $(PY)
 
 .c.o:
 	$(CC) -Iinclude -c $< -o $@ $(CFLAGS)
