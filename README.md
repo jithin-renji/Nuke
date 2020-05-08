@@ -24,4 +24,7 @@ NOTE: This program requires root privileges to run.
 ```
 
 ## Installation
-Run ```make install``` to make and install nuke.
+
+NOTE: At the moment, Nuke can only be installed and run on Linux.
+Download the source tree and change to the source directory.
+Run ```make install``` to make and install Nuke.
