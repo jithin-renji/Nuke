@@ -51,6 +51,10 @@ class Ui_MainWindow(object):
         self.label_4.setPixmap(QtGui.QPixmap("ui/../img/Nuke.png"))
         self.label_4.setScaledContents(True)
         self.label_4.setObjectName("label_4")
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton.setGeometry(QtCore.QRect(160, 370, 80, 23))
+        self.pushButton.setStyleSheet("background-color: rgb(255, 255, 255);")
+        self.pushButton.setObjectName("pushButton")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 400, 20))
@@ -69,6 +73,7 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "Nuke"))
         self.label_2.setText(_translate("MainWindow", "Drive"))
         self.label_3.setText(_translate("MainWindow", "Repeat"))
+        self.pushButton.setText(_translate("MainWindow", "Nuke!"))
 
 
 if __name__ == "__main__":
