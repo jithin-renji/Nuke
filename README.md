@@ -1,6 +1,7 @@
 # Nuke
-Nuke is a program that can be used to 'nuke' a drive of its contents. It zeroes
-out a given drive and writes random bytes for further data destruction.
+Nuke is a program that can be used to destroy the contents of a given
+drive. It zeroes out a given drive and writes random bytes for further
+data destruction.
 
 ```
 Usage: nuke <drive 1> [drive 2] ...
