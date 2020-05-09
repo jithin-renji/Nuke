@@ -7,26 +7,26 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>450</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>400</width>
-    <height>450</height>
+    <height>500</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>400</width>
-    <height>450</height>
+    <height>500</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>Nuke</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(34, 34, 34);</string>
+   <string notr="true">background-color: rgb(234, 234, 234);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="big_title">
@@ -47,7 +47,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);</string>
+     <string notr="true">color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
      <string>Nuke</string>
@@ -66,7 +66,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);</string>
+     <string notr="true">color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
      <string>Drive</string>
@@ -82,7 +82,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);</string>
+     <string notr="true">color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
      <string>Repeat</string>
@@ -98,7 +98,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);</string>
+     <string notr="true">color: rgb(0, 0, 0);</string>
     </property>
     <property name="currentText">
      <string/>
@@ -107,14 +107,15 @@
    <widget class="QSpinBox" name="rep_spinbox">
     <property name="geometry">
      <rect>
-      <x>160</x>
+      <x>310</x>
       <y>340</y>
       <width>42</width>
       <height>24</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);</string>
+     <string notr="true">color: rgb(255, 255, 255);
+color: rgb(0, 0, 0);</string>
     </property>
     <property name="minimum">
      <number>1</number>
@@ -146,16 +147,59 @@
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>380</y>
+      <y>420</y>
       <width>80</width>
       <height>23</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
+     <string notr="true">background-color: rgb(36, 154, 0);
+color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
      <string>Go!</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="rb_checkbox">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>370</y>
+      <width>16</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>16</width>
+      <height>16</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(0, 0, 0);
+background-color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+    <property name="tristate">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>370</y>
+      <width>261</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Don't write random bytes</string>
     </property>
    </widget>
   </widget>

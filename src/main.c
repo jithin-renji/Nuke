@@ -38,6 +38,7 @@ void version (const char* progname);
 struct option long_opt[] = {
 	{"zero",	no_argument,		0, 'z'},
 	{"num-reps",	required_argument,	0, 'n'},
+	{"yes",		no_argument,		0, 'Y'},
 	{"help", 	no_argument, 		0, 'h'},
 	{"version", 	no_argument, 		0, 'V'},
 	{0,		0,			0,  0}
@@ -59,7 +60,10 @@ int main (int argc, char** argv)
 		/* Number of times to repeat the procedure */
 		int nreps = 1;
 
-		while ((opt = getopt_long(argc, argv, "z0n:hV", long_opt, &opt_index)) != -1) {
+		/* If unset, don't ask for confirmation */
+		int ask_confirm = 1;
+
+		while ((opt = getopt_long(argc, argv, "z0n:YhV", long_opt, &opt_index)) != -1) {
 			switch (opt) {
 			case '0':
 			case 'z':
@@ -67,6 +71,9 @@ int main (int argc, char** argv)
 				break;
 			case 'n':
 				nreps = atoi(optarg);
+				break;
+			case 'Y':
+				ask_confirm = 0;
 				break;
 			case 'h':
 				usage(argv[0]);
@@ -101,7 +108,7 @@ int main (int argc, char** argv)
 
 		srand(time(NULL));
 		while (*drvs != NULL) {
-			int ret = nuke(*drvs, only_zero, nreps);
+			int ret = nuke(*drvs, only_zero, nreps, ask_confirm);
 			if (ret == -1) {
 				exit(EXIT_FAILURE);
 			}
@@ -121,6 +128,7 @@ void usage (const char* progname)
 	printf("Options:\n"
 	       "\t-z, -0, --zero\tDon't write random bytes to drive\n"
 	       "\t-n, --num-reps\tNumber of times to repeat the process (defaults to 1)\n"
+	       "\t-Y, --yes\tDon't ask for confirmation " B_WHITE "(NOT RECOMMENDED!)\n" RESET
 	       "\t-h, --help\tDisplay this help and exit\n"
 	       "\t-v, --version\tDisplay version information and exit\n\n"
 	       "Examples:\n"

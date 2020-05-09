@@ -36,7 +36,7 @@
 
 int confirm (const char* drv);
 
-int nuke (const char* drv, int only_zero, int nreps)
+int nuke (const char* drv, int only_zero, int nreps, int ask_confirm)
 {
 	int fd_drv = open(drv, O_RDWR);
 
@@ -64,7 +64,11 @@ int nuke (const char* drv, int only_zero, int nreps)
 	bs = drv_stat.st_blksize;
 	bytes_drv = 512 * nblocks_drv;
 
-	int cnfrm = confirm(drv);
+	int cnfrm = 1;
+
+	if (ask_confirm == 1) {
+		cnfrm = confirm(drv);
+	}
 
 	if (cnfrm) {
 		/* Location to seek to */
