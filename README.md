@@ -1,3 +1,5 @@
+<img src="img/Nuke.png" alt="Nuke Logo" width=200 height=200/>
+
 # Nuke
 Nuke is a program that can be used to destroy the contents of a given
 drive. It zeroes out a given drive and writes random bytes for further
@@ -11,6 +13,7 @@ Remove a drive(s) of its contents.
 Options:
 	-z, -0, --zero	Don't write random bytes to drive
 	-n, --num-reps	Number of times to repeat the process (defaults to 1)
+	-Y		Don't ask for confirmation (NOT RECOMMENDED)
 	-h, --help	Display this help and exit
 	-V, --version	Display this version information and exit
 
@@ -22,6 +25,10 @@ Examples:
 
 NOTE: This program requires root privileges to run.
 ```
+
+## Requirements
+1. GCC
+2. PyQt5
 
 ## Installation
 
