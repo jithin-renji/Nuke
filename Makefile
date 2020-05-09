@@ -26,6 +26,7 @@ gui ui: $(BIN)
 
 install: $(BIN)
 	cp $(BIN) /usr/bin/
+	cp Nuke.py
 
 clean:
 	rm -f $(OBJS) $(BIN)

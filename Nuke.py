@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import sys
 from glob import glob
 from os.path import basename, dirname
@@ -57,49 +59,49 @@ class MainW(QMainWindow, Ui_MainWindow):
 
     def update_drv(self, i):
         self.drv = self.drive_list.currentText()
-        print("Current Drive: ", self.drv)
 
     def update_nreps(self, i):
         self.nreps = i
-        print("Reps: ", self.nreps)
 
     def update_only_zero(self, i):
         self.only_zero = bool(i)
-        print("Only zero: ", self.only_zero)
 
     def confirm(self):
         if self.drv == "" or self.drv == "-- No Drive Selected --":
             dlg = NukeNoDriveDlg(self)
             dlg.exec_()
         else:
-            cmd = "./nuke -n {} -Y ".format(self.nreps)
+            self.cmd = "nuke -n {} -Y ".format(self.nreps)
             if self.only_zero:
                 cmd += "-z "
-            cmd += self.drv
-            print(cmd)
+            self.cmd += self.drv
+            print(self.cmd)
 
-            msg = QMessageBox()
+            self.msg = QMessageBox()
 
-            msg.setText("All data on '{}' will be erased <b>PERMANENTLY!</b><br/>\
+            self.msg.setText("All data on '{}' will be erased <b>PERMANENTLY!</b><br/>\
 Do you <b>STILL</b> want to continue?".format(self.drv))
 
-            msg.setWindowTitle("Nuke")
-            msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-            msg.buttonClicked.connect(self.nuke)
-            msg.exec_()
+            self.msg.setWindowTitle("Nuke")
+            self.msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            self.msg.buttonClicked.connect(self.nuke)
+            self.msg.exec_()
 
     def nuke(self, resp):
+        self.msg.close()
         if resp.text() == "&Yes":
             print(self.drv + " going down now!")
 
             msg = QMessageBox()
-            msg.setText("This may take a few minutes...")
-            l = msg.layout()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("Check the terminal for progress.")
+            msg.exec_()
 
-            l.itemAtPosition(l.rowCount() - 1, 0).widget().hide()
-            
-            progress = QProgressBar()
-            l.addWidget(progress, l.rowCount(), 0, 1, l.columnCount(), Qt.AlignCenter)
+            run(self.cmd.split())
+
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("Done!")
             msg.exec_()
             
         else:
