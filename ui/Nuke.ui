@@ -29,7 +29,7 @@
    <string notr="true">background-color: rgb(34, 34, 34);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="big_title">
     <property name="geometry">
      <rect>
       <x>110</x>
@@ -56,7 +56,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="drive_label">
     <property name="geometry">
      <rect>
       <x>70</x>
@@ -72,7 +72,7 @@
      <string>Drive</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="rep_label">
     <property name="geometry">
      <rect>
       <x>70</x>
@@ -88,7 +88,7 @@
      <string>Repeat</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="comboBox">
+   <widget class="QComboBox" name="drive_list">
     <property name="geometry">
      <rect>
       <x>160</x>
@@ -97,8 +97,14 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="currentText">
+     <string/>
+    </property>
    </widget>
-   <widget class="QSpinBox" name="spinBox">
+   <widget class="QSpinBox" name="rep_spinbox">
     <property name="geometry">
      <rect>
       <x>160</x>
@@ -110,8 +116,14 @@
     <property name="styleSheet">
      <string notr="true">color: rgb(255, 255, 255);</string>
     </property>
+    <property name="minimum">
+     <number>1</number>
+    </property>
+    <property name="value">
+     <number>1</number>
+    </property>
    </widget>
-   <widget class="QLabel" name="label_4">
+   <widget class="QLabel" name="logo">
     <property name="geometry">
      <rect>
       <x>110</x>
@@ -130,11 +142,11 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="go_button">
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>370</y>
+      <y>380</y>
       <width>80</width>
       <height>23</height>
      </rect>
@@ -143,7 +155,7 @@
      <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>Nuke!</string>
+     <string>Go!</string>
     </property>
    </widget>
   </widget>

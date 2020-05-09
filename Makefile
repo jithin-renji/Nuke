@@ -9,16 +9,16 @@ OBJS = src/main.o \
        src/nuke.o
 
 UI = ui/Nuke.ui
-PY = Nuke.py
+PY = nuke_ui.py
 
-.PHONY: clean
+.PHONY: clean install gui ui
 .SUFFIXES: .o .c
 
 $(BIN): $(OBJS)
 	$(CC) $(OBJS) $(CFLAGS) -o $(BIN)
 	pyuic5 -x $(UI) -o $(PY)
 
-gui: $(BIN)
+gui ui: $(BIN)
 	pyuic5 -x $(UI) -o $(PY)
 
 .c.o:
