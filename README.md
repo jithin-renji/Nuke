@@ -28,7 +28,8 @@ NOTE: This program requires root privileges to run.
 
 ## Requirements
 1. GCC
-2. PyQt5 (for the GUI front-end)
+2. GNU Make
+3. PyQt5 (for the GUI front-end)
 
 ## Installation
 
