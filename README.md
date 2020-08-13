@@ -8,7 +8,7 @@ data destruction.
 ```
 Usage: nuke <drive 1> [drive 2] ...
 
-Remove a drive(s) of its contents.
+Destroy the contents of a drive/drives.
 
 Options:
 	-z, -0, --zero	Don't write random bytes to drive

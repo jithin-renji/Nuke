@@ -123,7 +123,7 @@ void usage (const char* progname)
 {
 	printf("Usage: %s <drive 1> [drive 2] ...\n\n", progname);
 
-	printf("Remove a drive(s) of its contents.\n\n");
+	printf("Destroy the contents of a drive/drives.\n\n");
 
 	printf("Options:\n"
 	       "\t-z, -0, --zero\tDon't write random bytes to drive\n"
