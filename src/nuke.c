@@ -36,12 +36,19 @@
 
 int confirm (const char* drv);
 
-int nuke (const char* drv, int only_zero, int nreps, int ask_confirm)
+int nuke (const char* drv, int only_zero, int nreps, int nsects , int ask_confirm) //
 {
-	int fd_drv = open(drv, O_RDWR);
+	int fd_drv = open(drv, O_RDWR);  //Mode read write
 
-	/* Stats */	
-	struct stat drv_stat;
+	/* Stats */
+	struct stat drv_stat; //Structure that contains information regarding the file.
+
+	/*   #include <sys/types.h>
+       #include <sys/stat.h>
+       #include <unistd.h>
+	*/
+
+
 	unsigned long nblocks_drv = 0;
 	long long bytes_drv = 0;
 
@@ -49,20 +56,38 @@ int nuke (const char* drv, int only_zero, int nreps, int ask_confirm)
 	size_t bs = 0;
 
 	if (fd_drv == -1) {
-		perror(drv);
+		perror(drv); //Print drv name to stderr if file doesnt exist.
 		return -1;
 	}
 
 	int r_drv = ioctl(fd_drv, BLKGETSIZE, &nblocks_drv);
+	//#include <sys/ioctl.h> : Get me the size in sector of fd_drv (BLKGETSIZE) to be stored on nblocks_drv. zero success, otherwise -1 (few exceptions)
+
+	//BLKGETSIZE: device depend request code, this one tells specifically to ioctl to get the size of a block device
 
 	if (r_drv == -1) {
 		perror(drv);
 		return -1;
 	}
-	
+
 	fstat(fd_drv, &drv_stat);
-	bs = drv_stat.st_blksize;
-	bytes_drv = 512 * nblocks_drv;
+	//https://linux.die.net/man/2/fstat get stats of a file, actually it returns a stats structure, in this case will be passed to drv_stat
+
+	bs = drv_stat.st_blksize; //Block size for filesystem I/O
+
+  //bs = 4096
+
+
+  if(nsects)
+	{
+		bytes_drv = bs * nsects;
+	}
+
+	else
+	{
+		bytes_drv = 512 * nblocks_drv; //Size of disk sector is of 512 bytes.
+  }
+
 
 	int cnfrm = 1;
 
@@ -80,6 +105,9 @@ int nuke (const char* drv, int only_zero, int nreps, int ask_confirm)
 			clear_drv (fd_drv, bytes_drv, bs, seek_loc);
 
 			if (!only_zero) {
+
+				 /*Why random bytes and then clear??*/
+
 				rand_drv (fd_drv, bytes_drv, bs, seek_loc);
 				clear_drv (fd_drv, bytes_drv, bs, seek_loc);
 			}
@@ -109,9 +137,9 @@ int confirm (const char* drv)
 	return 0;
 }
 
-void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
+void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)//off_t size is 8 bytes in
 {
-	lseek(fd_drv, seek_loc, SEEK_SET);
+	lseek(fd_drv, seek_loc, SEEK_SET); //moves file offset to 0, start of the file.
 	/*
 		Number of bytes written, is
 		used to calculate the percentage of
@@ -122,7 +150,7 @@ void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 	/* Buffer to store 0's to be written */
 	char buf[bs];
 
-	memset(buf, 0, sizeof(buf));
+	memset(buf, 0, sizeof(buf)); //Writes 0's bytes to buf
 
 	while (nbytes_written != count) {
 		int ret = write(fd_drv, buf, bs);
@@ -131,7 +159,7 @@ void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 			perror("");
 			exit(EXIT_FAILURE);
 		}
-		
+
 		long double percent = (nbytes_written/count) * 100;
 
 		/* Hide cursor */
@@ -147,6 +175,8 @@ void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 	}
 	printf("\n");
 }
+
+//Why using seek_loc if the offset will be zero anyway?
 
 void rand_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 {
@@ -168,11 +198,11 @@ void rand_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 			perror("");
 			exit(EXIT_FAILURE);
 		}
-		
+
 		long double percent = (nbytes_written/count) * 100;
 
 		fputs("\e[?25l", stdout);
-		
+
 		printf("\tWriting %ld random byte(s). [%.2Lf%%]\r", count, percent);
 		fflush(stdout);
 
