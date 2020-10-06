@@ -92,7 +92,7 @@ int nuke (const char* drv, int only_zero, int nreps, int nsects , int ask_confir
 	int cnfrm = 1;
 
 	if (ask_confirm == 1) {
-		cnfrm = confirm(drv);
+		cnfrm = confirm(drv, nsects);
 	}
 
 	if (cnfrm) {
@@ -119,16 +119,39 @@ int nuke (const char* drv, int only_zero, int nreps, int nsects , int ask_confir
 	return 0;
 }
 
-int confirm (const char* drv)
+int confirm (const char* drv, unsigned char sect_set)
 {
-	printf(B_RED "WARNING: " WHITE "The contents of '%s' "
-	       B_RED "CANNOT BE RECOVERED " WHITE "after this operation\n\
-         and all data on this device will be " B_RED "PERMENANTLY DELETED!\n\n" RESET, drv);
 
-	printf("Do you " B_WHITE "STILL" WHITE " want to continue? [" B_RED "yes" WHITE "/" B_GREEN "NO" RESET "] ");
+
+	if(!nsects)
+	{
+
+		printf(B_RED "WARNING: " WHITE "The contents of '%s' "
+	       	B_RED "CANNOT BE RECOVERED " WHITE "after this operation\n\
+         	and all data on this device will be " B_RED "PERMENANTLY DELETED!\n\n" RESET, drv);
+
+	  printf("Do you " B_WHITE "STILL" WHITE " want to continue? [" B_RED "yes" WHITE "/" B_GREEN "NO" RESET "] ");
+
+
+
+ }
+ else
+ {
+
+	 printf(B_RED "WARNING: " WHITE "The contents of the 0 to %d sectors on '%s' "
+	 			B_RED "CANNOT BE RECOVERED " WHITE "after this operation\n\
+	 			and all data on this range will be " B_RED "PERMENANTLY DELETED!\n\n" RESET, sect_set, drv);
+
+	 printf("Do you " B_WHITE "STILL" WHITE " want to continue? [" B_RED "yes" WHITE "/" B_GREEN "NO" RESET "] ");
+
+
+
+ }
+
 
 	char response[512];
 	fgets(response, 512, stdin);
+
 
 	if (strcmp(response, "yes\n") == 0) {
 		return 1;
