@@ -36,23 +36,15 @@
 
 int confirm (const char* drv, const int sects, const int pct);
 
-//nsects option to erase the number of sectors and psects to erase percentage of disk sectors
+
 int nuke (const char* drv, int only_zero, int nreps, int nsects, float pct, int ask_confirm)
 
 {
 
-
-	int fd_drv = open(drv, O_RDWR);  //Mode read write
+	int fd_drv = open(drv, O_RDWR);
 
 	/* Stats */
-	struct stat drv_stat; //Structure that contains information regarding the file.
-
-	/*   #include <sys/types.h>
-       #include <sys/stat.h>
-       #include <unistd.h>
-	*/
-
-
+	struct stat drv_stat;
 	unsigned long nblocks_drv = 0;
 	long long bytes_drv = 0;
 
@@ -60,14 +52,11 @@ int nuke (const char* drv, int only_zero, int nreps, int nsects, float pct, int 
 	size_t bs = 0;
 
 	if (fd_drv == -1) {
-		perror(drv); //Print drv name to stderr if file doesnt exist.
+		perror(drv);
 		return -1;
 	}
 
 	int r_drv = ioctl(fd_drv, BLKGETSIZE, &nblocks_drv);
-	//#include <sys/ioctl.h> : Get me the size in sectors (number of sectors) of fd_drv (BLKGETSIZE) to be stored on nblocks_drv. zero success, otherwise -1 (few exceptions)
-
-	//BLKGETSIZE: device depend request code, this one tells specifically to ioctl to get the size of a block device
 
 	if (r_drv == -1) {
 		perror(drv);
@@ -75,20 +64,16 @@ int nuke (const char* drv, int only_zero, int nreps, int nsects, float pct, int 
 	}
 
 	fstat(fd_drv, &drv_stat);
-	//https://linux.die.net/man/2/fstat get stats of a file, actually it returns a stats structure, in this case will be passed to drv_stat
+	bs = drv_stat.st_blksize;
 
-	bs = drv_stat.st_blksize; //Block size for filesystem I/O
-
-  //bs = 4096
-
-
+	/*Little logic added for supporting number of sectors and percentage of sectors funcionality*/
 
   if(nsects){
 		bytes_drv = 512 * nsects;
 	}else if(pct){
 		bytes_drv = 512 * (nblocks_drv * (pct/100));
 	}else{
-		bytes_drv = 512 * nblocks_drv; //Size of disk sector is of 512 bytes.
+		bytes_drv = 512 * nblocks_drv;
 	}
 
 
@@ -108,9 +93,6 @@ int nuke (const char* drv, int only_zero, int nreps, int nsects, float pct, int 
 			clear_drv (fd_drv, bytes_drv, bs, seek_loc);
 
 			if (!only_zero) {
-
-				 /*Why random bytes and then clear??*/
-
 				rand_drv (fd_drv, bytes_drv, bs, seek_loc);
 				clear_drv (fd_drv, bytes_drv, bs, seek_loc);
 			}
@@ -125,6 +107,8 @@ int nuke (const char* drv, int only_zero, int nreps, int nsects, float pct, int 
 int confirm (const char* drv, const int sects, const int pct)
 {
 
+
+	/*adequating the message according to the funcionality */
 
 	if(sects){
 
@@ -146,16 +130,11 @@ int confirm (const char* drv, const int sects, const int pct)
 
 	}else{
 
-
 			printf(B_RED "WARNING: " WHITE "The contents of '%s' "
 			B_RED "CANNOT BE RECOVERED " WHITE "after this operation\n\
 			and all data on this device will be " B_RED "PERMENANTLY DELETED!\n\n" RESET, drv);
 
 			printf("Do you " B_WHITE "STILL" WHITE " want to continue? [" B_RED "yes" WHITE "/" B_GREEN "NO" RESET "] ");
-
-
-
-
 
  }
 
@@ -184,8 +163,9 @@ void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)//off_t size
 	/* Buffer to store 0's to be written */
 	char buf[bs];
 
-	memset(buf, 0, sizeof(buf)); //Writes 0's bytes to buf
+	memset(buf, 0, sizeof(buf));
 
+		//Percentage func. produces the nbytes_written to skip count. < count comparison. Same on rand_drv.
 	while (nbytes_written != count && nbytes_written < count) {
 		int ret = write(fd_drv, buf, bs);
 
@@ -210,7 +190,6 @@ void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)//off_t size
 	printf("\n");
 }
 
-//Why using seek_loc if the offset will be zero anyway?
 
 void rand_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 {

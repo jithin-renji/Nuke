@@ -51,8 +51,6 @@ int opt_index = 0;
 int main (int argc, char** argv)
 {
 
-	printf("\n[******************This is a Test version************************]\n\n\n");
-
 	if (argc < 2) {
 		usage(argv[0]);
 		exit(EXIT_FAILURE);
