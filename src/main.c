@@ -39,6 +39,7 @@ struct option long_opt[] = {
 	{"zero",	no_argument,		0, 'z'},
 	{"num-reps",	required_argument,	0, 'n'},
 	{"num-sect",	required_argument,	0, 'S'},
+	{"per-sect",	required_argument,	0, 'P'},
 	{"yes",		no_argument,		0, 'Y'},
 	{"help", 	no_argument, 		0, 'h'},
 	{"version", 	no_argument, 		0, 'V'},
@@ -67,10 +68,13 @@ int main (int argc, char** argv)
 		/* Number of sectors to be written */
 		int nsects = 0;
 
+		/* Percentage of sectors to be written */
+		float pct = 0;
+
 		/* If unset, don't ask for confirmation */
 		int ask_confirm = 1;
 
-		while ((opt = getopt_long(argc, argv, "z0n:YhVS:", long_opt, &opt_index)) != -1) { //Return each of the option characters found, semicolon is set after options that require a parameters.
+		while ((opt = getopt_long(argc, argv, "z0n:YhVS:P:", long_opt, &opt_index)) != -1) { //Return each of the option characters found, semicolon is set after options that require a parameters.
 			switch (opt) {
 			case '0':
 			case 'z':
@@ -82,6 +86,10 @@ int main (int argc, char** argv)
 
 			case 'S':
 				nsects = atoi(optarg); //Get the number of sectors that need to be deleted
+				break;
+
+			case 'P':
+				pct = atof(optarg); //Get the percentage of sectors that need to be deleted
 				break;
 
 			case 'Y':
@@ -120,7 +128,7 @@ int main (int argc, char** argv)
 
 		srand(time(NULL));
 		while (*drvs != NULL) {
-			int ret = nuke(*drvs, only_zero, nreps, nsects, ask_confirm);
+			int ret = nuke(*drvs, only_zero, nreps, nsects, pct, ask_confirm);
 			if (ret == -1) {
 				exit(EXIT_FAILURE);
 			}
@@ -142,6 +150,7 @@ void usage (const char* progname)
 	       "\t-n, --num-reps\tNumber of times to repeat the process (defaults to 1)\n"
 	       "\t-Y, --yes\tDon't ask for confirmation " B_WHITE "(NOT RECOMMENDED!)\n" RESET
 				 "\t-S, --num-sect\tNumber of sectors to be written\n"
+				 "\t-P, --per-sect\tPercentage of sectors to be written\n"
 	       "\t-h, --help\tDisplay this help and exit\n"
 	       "\t-v, --version\tDisplay version information and exit\n\n"
 	       "Examples:\n"

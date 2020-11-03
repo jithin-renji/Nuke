@@ -34,10 +34,14 @@
 #include "nuke.h"
 #include "colors.h"
 
-int confirm (const char* drv);
+int confirm (const char* drv, const int sects, const int pct);
 
-int nuke (const char* drv, int only_zero, int nreps, int nsects , int ask_confirm) //
+//nsects option to erase the number of sectors and psects to erase percentage of disk sectors
+int nuke (const char* drv, int only_zero, int nreps, int nsects, float pct, int ask_confirm)
+
 {
+
+
 	int fd_drv = open(drv, O_RDWR);  //Mode read write
 
 	/* Stats */
@@ -61,7 +65,7 @@ int nuke (const char* drv, int only_zero, int nreps, int nsects , int ask_confir
 	}
 
 	int r_drv = ioctl(fd_drv, BLKGETSIZE, &nblocks_drv);
-	//#include <sys/ioctl.h> : Get me the size in sector of fd_drv (BLKGETSIZE) to be stored on nblocks_drv. zero success, otherwise -1 (few exceptions)
+	//#include <sys/ioctl.h> : Get me the size in sectors (number of sectors) of fd_drv (BLKGETSIZE) to be stored on nblocks_drv. zero success, otherwise -1 (few exceptions)
 
 	//BLKGETSIZE: device depend request code, this one tells specifically to ioctl to get the size of a block device
 
@@ -78,21 +82,20 @@ int nuke (const char* drv, int only_zero, int nreps, int nsects , int ask_confir
   //bs = 4096
 
 
-  if(nsects)
-	{
-		bytes_drv = bs * nsects;
-	}
 
-	else
-	{
+  if(nsects){
+		bytes_drv = 512 * nsects;
+	}else if(pct){
+		bytes_drv = 512 * (nblocks_drv * (pct/100));
+	}else{
 		bytes_drv = 512 * nblocks_drv; //Size of disk sector is of 512 bytes.
-  }
+	}
 
 
 	int cnfrm = 1;
 
 	if (ask_confirm == 1) {
-		cnfrm = confirm(drv, nsects);
+		cnfrm = confirm(drv, nsects, pct);
 	}
 
 	if (cnfrm) {
@@ -119,30 +122,38 @@ int nuke (const char* drv, int only_zero, int nreps, int nsects , int ask_confir
 	return 0;
 }
 
-int confirm (const char* drv, unsigned char sect_set)
+int confirm (const char* drv, const int sects, const int pct)
 {
 
 
-	if(!nsects)
-	{
+	if(sects){
 
-		printf(B_RED "WARNING: " WHITE "The contents of '%s' "
-	       	B_RED "CANNOT BE RECOVERED " WHITE "after this operation\n\
-         	and all data on this device will be " B_RED "PERMENANTLY DELETED!\n\n" RESET, drv);
+			printf(B_RED "WARNING: " WHITE "Contents from the first to the %dth sectors on '%s' "
+			B_RED "CANNOT BE RECOVERED " WHITE "after this operation\n\
+			and all data on this range will be " B_RED "PERMENANTLY DELETED!\n\n" RESET, sects, drv);
 
-	  printf("Do you " B_WHITE "STILL" WHITE " want to continue? [" B_RED "yes" WHITE "/" B_GREEN "NO" RESET "] ");
-
+			printf("Do you " B_WHITE "STILL" WHITE " want to continue? [" B_RED "yes" WHITE "/" B_GREEN "NO" RESET "] ");
 
 
- }
- else
- {
+ 	}else if(pct){
 
-	 printf(B_RED "WARNING: " WHITE "The contents of the 0 to %d sectors on '%s' "
-	 			B_RED "CANNOT BE RECOVERED " WHITE "after this operation\n\
-	 			and all data on this range will be " B_RED "PERMENANTLY DELETED!\n\n" RESET, sect_set, drv);
+		printf(B_RED "WARNING: " WHITE "%d%% of disk sector's contents on '%s' "
+		B_RED "CANNOT BE RECOVERED " WHITE "after this operation\n\
+		and all data on this range will be " B_RED "PERMENANTLY DELETED!\n\n" RESET, pct, drv);
 
-	 printf("Do you " B_WHITE "STILL" WHITE " want to continue? [" B_RED "yes" WHITE "/" B_GREEN "NO" RESET "] ");
+		printf("Do you " B_WHITE "STILL" WHITE " want to continue? [" B_RED "yes" WHITE "/" B_GREEN "NO" RESET "] ");
+
+
+	}else{
+
+
+			printf(B_RED "WARNING: " WHITE "The contents of '%s' "
+			B_RED "CANNOT BE RECOVERED " WHITE "after this operation\n\
+			and all data on this device will be " B_RED "PERMENANTLY DELETED!\n\n" RESET, drv);
+
+			printf("Do you " B_WHITE "STILL" WHITE " want to continue? [" B_RED "yes" WHITE "/" B_GREEN "NO" RESET "] ");
+
+
 
 
 
@@ -175,7 +186,7 @@ void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)//off_t size
 
 	memset(buf, 0, sizeof(buf)); //Writes 0's bytes to buf
 
-	while (nbytes_written != count) {
+	while (nbytes_written != count && nbytes_written < count) {
 		int ret = write(fd_drv, buf, bs);
 
 		if (ret == -1) {
@@ -210,7 +221,7 @@ void rand_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 	/* Buffer to store random bytes */
 	char buf[bs];
 
-	while (nbytes_written != count) {
+	while (nbytes_written != count && nbytes_written < count) {
 		for (int i = 0; i < bs; i++) {
 			buf[i] = rand() % 256;
 		}
