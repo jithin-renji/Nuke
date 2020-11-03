@@ -1,6 +1,6 @@
 /* nuke.h: This is the main header */
 
-/*	
+/*
  *	Copyright (C) 2020 Jithin Renji
  *
  *	This file is part of Nuke.
@@ -24,7 +24,7 @@
 
 #include <sys/types.h>
 
-int nuke (const char* drv, int only_zero, int nreps, int ask_confirm);
+int nuke (const char* drv, int only_zero, int nreps, int nsects, float pct, int ask_confirm);
 void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc);
 void rand_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc);
 

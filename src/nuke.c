@@ -34,13 +34,16 @@
 #include "nuke.h"
 #include "colors.h"
 
-int confirm (const char* drv);
+int confirm (const char* drv, const int sects, const int pct);
 
-int nuke (const char* drv, int only_zero, int nreps, int ask_confirm)
+
+int nuke (const char* drv, int only_zero, int nreps, int nsects, float pct, int ask_confirm)
+
 {
+
 	int fd_drv = open(drv, O_RDWR);
 
-	/* Stats */	
+	/* Stats */
 	struct stat drv_stat;
 	unsigned long nblocks_drv = 0;
 	long long bytes_drv = 0;
@@ -59,15 +62,25 @@ int nuke (const char* drv, int only_zero, int nreps, int ask_confirm)
 		perror(drv);
 		return -1;
 	}
-	
+
 	fstat(fd_drv, &drv_stat);
 	bs = drv_stat.st_blksize;
-	bytes_drv = 512 * nblocks_drv;
+
+	/*Little logic added for supporting number of sectors and percentage of sectors funcionality*/
+
+  if(nsects){
+		bytes_drv = 512 * nsects;
+	}else if(pct){
+		bytes_drv = 512 * (nblocks_drv * (pct/100));
+	}else{
+		bytes_drv = 512 * nblocks_drv;
+	}
+
 
 	int cnfrm = 1;
 
 	if (ask_confirm == 1) {
-		cnfrm = confirm(drv);
+		cnfrm = confirm(drv, nsects, pct);
 	}
 
 	if (cnfrm) {
@@ -91,16 +104,44 @@ int nuke (const char* drv, int only_zero, int nreps, int ask_confirm)
 	return 0;
 }
 
-int confirm (const char* drv)
+int confirm (const char* drv, const int sects, const int pct)
 {
-	printf(B_RED "WARNING: " WHITE "The contents of '%s' "
-	       B_RED "CANNOT BE RECOVERED " WHITE "after this operation\n\
-         and all data on this device will be " B_RED "PERMENANTLY DELETED!\n\n" RESET, drv);
 
-	printf("Do you " B_WHITE "STILL" WHITE " want to continue? [" B_RED "yes" WHITE "/" B_GREEN "NO" RESET "] ");
+
+	/*adequating the message according to the funcionality */
+
+	if(sects){
+
+			printf(B_RED "WARNING: " WHITE "Contents from the first to the %dth sectors on '%s' "
+			B_RED "CANNOT BE RECOVERED " WHITE "after this operation\n\
+			and all data on this range will be " B_RED "PERMENANTLY DELETED!\n\n" RESET, sects, drv);
+
+			printf("Do you " B_WHITE "STILL" WHITE " want to continue? [" B_RED "yes" WHITE "/" B_GREEN "NO" RESET "] ");
+
+
+ 	}else if(pct){
+
+		printf(B_RED "WARNING: " WHITE "%d%% of disk sector's contents on '%s' "
+		B_RED "CANNOT BE RECOVERED " WHITE "after this operation\n\
+		and all data on this range will be " B_RED "PERMENANTLY DELETED!\n\n" RESET, pct, drv);
+
+		printf("Do you " B_WHITE "STILL" WHITE " want to continue? [" B_RED "yes" WHITE "/" B_GREEN "NO" RESET "] ");
+
+
+	}else{
+
+			printf(B_RED "WARNING: " WHITE "The contents of '%s' "
+			B_RED "CANNOT BE RECOVERED " WHITE "after this operation\n\
+			and all data on this device will be " B_RED "PERMENANTLY DELETED!\n\n" RESET, drv);
+
+			printf("Do you " B_WHITE "STILL" WHITE " want to continue? [" B_RED "yes" WHITE "/" B_GREEN "NO" RESET "] ");
+
+ }
+
 
 	char response[512];
 	fgets(response, 512, stdin);
+
 
 	if (strcmp(response, "yes\n") == 0) {
 		return 1;
@@ -109,9 +150,9 @@ int confirm (const char* drv)
 	return 0;
 }
 
-void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
+void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)//off_t size is 8 bytes in
 {
-	lseek(fd_drv, seek_loc, SEEK_SET);
+	lseek(fd_drv, seek_loc, SEEK_SET); //moves file offset to 0, start of the file.
 	/*
 		Number of bytes written, is
 		used to calculate the percentage of
@@ -124,14 +165,15 @@ void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 
 	memset(buf, 0, sizeof(buf));
 
-	while (nbytes_written != count) {
+		//Percentage func. produces the nbytes_written to skip count. < count comparison. Same on rand_drv.
+	while (nbytes_written != count && nbytes_written < count) {
 		int ret = write(fd_drv, buf, bs);
 
 		if (ret == -1) {
 			perror("");
 			exit(EXIT_FAILURE);
 		}
-		
+
 		long double percent = (nbytes_written/count) * 100;
 
 		/* Hide cursor */
@@ -148,6 +190,7 @@ void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 	printf("\n");
 }
 
+
 void rand_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 {
 	lseek(fd_drv, seek_loc, SEEK_SET);
@@ -157,7 +200,7 @@ void rand_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 	/* Buffer to store random bytes */
 	char buf[bs];
 
-	while (nbytes_written != count) {
+	while (nbytes_written != count && nbytes_written < count) {
 		for (int i = 0; i < bs; i++) {
 			buf[i] = rand() % 256;
 		}
@@ -168,11 +211,11 @@ void rand_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 			perror("");
 			exit(EXIT_FAILURE);
 		}
-		
+
 		long double percent = (nbytes_written/count) * 100;
 
 		fputs("\e[?25l", stdout);
-		
+
 		printf("\tWriting %ld random byte(s). [%.2Lf%%]\r", count, percent);
 		fflush(stdout);
 
