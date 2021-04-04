@@ -59,7 +59,7 @@ int nuke (const char* drv, int only_zero, int nreps, int ask_confirm)
 		perror(drv);
 		return -1;
 	}
-	
+
 	fstat(fd_drv, &drv_stat);
 	bs = drv_stat.st_blksize;
 	bytes_drv = 512 * nblocks_drv;
@@ -131,7 +131,7 @@ void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 			perror("");
 			exit(EXIT_FAILURE);
 		}
-		
+
 		long double percent = (nbytes_written/count) * 100;
 
 		/* Hide cursor */
@@ -168,11 +168,11 @@ void rand_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
 			perror("");
 			exit(EXIT_FAILURE);
 		}
-		
+
 		long double percent = (nbytes_written/count) * 100;
 
 		fputs("\e[?25l", stdout);
-		
+
 		printf("\tWriting %ld random byte(s). [%.2Lf%%]\r", count, percent);
 		fflush(stdout);
 

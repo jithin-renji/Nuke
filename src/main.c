@@ -37,7 +37,7 @@ void version (const char* progname);
 
 struct option long_opt[] = {
 	{"zero",	no_argument,		0, 'z'},
-	{"num-reps",	required_argument,	0, 'n'},
+	{"repeat",	required_argument,	0, 'n'},
 	{"yes",		no_argument,		0, 'Y'},
 	{"help", 	no_argument, 		0, 'h'},
 	{"version", 	no_argument, 		0, 'V'},
@@ -78,7 +78,7 @@ int main (int argc, char** argv)
 			case 'h':
 				usage(argv[0]);
 				exit(EXIT_SUCCESS);
-			
+
 			case 'V':
 				version(argv[0]);
 				exit(EXIT_SUCCESS);
@@ -127,7 +127,7 @@ void usage (const char* progname)
 
 	printf("Options:\n"
 	       "\t-z, -0, --zero\tDon't write random bytes to drive\n"
-	       "\t-n, --num-reps\tNumber of times to repeat the process (defaults to 1)\n"
+	       "\t-n, --repeat\tNumber of times to repeat the process (defaults to 1)\n"
 	       "\t-Y, --yes\tDon't ask for confirmation " B_WHITE "(NOT RECOMMENDED!)\n" RESET
 	       "\t-h, --help\tDisplay this help and exit\n"
 	       "\t-v, --version\tDisplay version information and exit\n\n"
