@@ -1,31 +1,24 @@
 CC = gcc
-CFLAGS =  -Wall
+CFLAGS = -Wall -g
+
 BIN = nuke
 
-SRC = src/main.c \
-      src/nuke.c
-
-OBJS = src/main.o \
-       src/nuke.o
+OBJS = $(patsubst src/%.c,src/%.o,$(wildcard src/*.c))
 
 UI = ui/Nuke.ui
 PY = nuke_ui.py
 
-.PHONY: clean install gui ui
-.SUFFIXES: .o .c
-
 $(BIN): $(OBJS)
-	$(CC) $(OBJS) $(CFLAGS) -o $(BIN)
-	pyuic5 -x $(UI) -o $(PY)
+	$(CC) $(CFLAGS) src/*.o -o $(BIN)
+
+src/%.o: src/%.c src/%.h
+	$(CC) $(CFLAGS) -c -o $@ $< $(CFLAGS)
+
+.PHONY: gui ui clean
 
 gui ui: $(BIN)
 	pyuic5 -x $(UI) -o $(PY)
 
-.c.o:
-	$(CC) -Iinclude -c $< -o $@ $(CFLAGS)
-
-install: $(BIN)
-	cp $(BIN) /usr/bin/
-
 clean:
-	rm -f $(OBJS) $(BIN)
+	rm -f src/*.o
+	rm -f $(PY)
