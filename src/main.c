@@ -145,7 +145,7 @@ void usage(const char* progname)
 void version(const char* progname)
 {
     printf(
-"%s 0.01\n"
+"%s v0.1\n"
 "Copyright (C) 2020 Jithin Renji.\n"
 "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n"
 "This is free software: you are free to change and redistribute it.\n"
