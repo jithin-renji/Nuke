@@ -34,9 +34,8 @@
 #include "nuke.h"
 #include "colors.h"
 
-int confirm (const char* drv);
 
-int nuke (const char* drv, int only_zero, int nreps, int ask_confirm)
+int nuke(const char* drv, int only_zero, int nreps, int ask_confirm)
 {
     int fd_drv = open(drv, O_RDWR);
 
@@ -91,7 +90,7 @@ int nuke (const char* drv, int only_zero, int nreps, int ask_confirm)
     return 0;
 }
 
-int confirm (const char* drv)
+int confirm(const char* drv)
 {
     printf(B_RED "WARNING: " WHITE "The contents of '%s' "
            B_RED "CANNOT BE RECOVERED " WHITE "after this operation\n\
@@ -109,7 +108,7 @@ int confirm (const char* drv)
     return 0;
 }
 
-void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
+void clear_drv(int fd_drv, size_t count, size_t bs, off_t seek_loc)
 {
     lseek(fd_drv, seek_loc, SEEK_SET);
     /*
@@ -148,7 +147,7 @@ void clear_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
     printf("\n");
 }
 
-void rand_drv (int fd_drv, size_t count, size_t bs, off_t seek_loc)
+void rand_drv(int fd_drv, size_t count, size_t bs, off_t seek_loc)
 {
     lseek(fd_drv, seek_loc, SEEK_SET);
     /* Same as clear_drv() */
