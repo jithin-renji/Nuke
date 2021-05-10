@@ -1,7 +1,7 @@
 /* main.c */
 
-/* Nuke: A program to completely wipe drives of its contents, by various
- * writing zeroes and random bytes */
+/* Nuke: A program to completely wipe drives of its contents, by writing
+ * zeroes and random bytes */
 
 /*
  *    Copyright (C) 2020 Jithin Renji
@@ -35,16 +35,6 @@
 void usage(const char* progname);
 void version(const char* progname);
 
-struct option long_opt[] = {
-    {"zero",        no_argument,            0, 'z'},
-    {"repeat",      required_argument,      0, 'n'},
-    {"yes",         no_argument,            0, 'Y'},
-    {"help",        no_argument,            0, 'h'},
-    {"version",     no_argument,            0, 'V'},
-    {0,             0,                      0,  0}
-};
-
-int opt_index = 0;
 
 int main(int argc, char** argv)
 {
@@ -52,6 +42,17 @@ int main(int argc, char** argv)
         usage(argv[0]);
         exit(EXIT_FAILURE);
     } else {
+        struct option long_opt[] = {
+            {"zero",        no_argument,            0, 'z'},
+            {"repeat",      required_argument,      0, 'n'},
+            {"yes",         no_argument,            0, 'Y'},
+            {"help",        no_argument,            0, 'h'},
+            {"version",     no_argument,            0, 'V'},
+            {0,             0,                      0,  0}
+        };
+
+        int opt_index = 0;
+
         int opt = 0;
 
         /* If set, don't write random bytes */
@@ -63,7 +64,8 @@ int main(int argc, char** argv)
         /* If unset, don't ask for confirmation */
         int ask_confirm = 1;
 
-        while ((opt = getopt_long(argc, argv, "z0n:YhV", long_opt, &opt_index)) != -1) {
+        while ((opt = getopt_long(argc, argv, "z0n:YhV", long_opt,
+                &opt_index)) != -1) {
             switch (opt) {
             case '0':
             case 'z':
