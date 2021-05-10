@@ -13,10 +13,10 @@ Destroy the contents of a drive/drives.
 
 Options:
     -z, -0, --zero    Don't write random bytes to drive
-    -n, --repeat    Number of times to repeat the process (defaults to 1)
-    -Y        Don't ask for confirmation (NOT RECOMMENDED)
-    -h, --help    Display this help and exit
-    -V, --version    Display this version information and exit
+    -n, --repeat      Number of times to repeat the process (defaults to 1)
+    -Y                Don't ask for confirmation (NOT RECOMMENDED)
+    -h, --help        Display this help and exit
+    -V, --version     Display this version information and exit
 
 Examples:
     nuke /dev/sdb
