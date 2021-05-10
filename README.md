@@ -43,6 +43,6 @@ NOTE: At the moment, Nuke can only be installed and run on Linux.
 
 * To compile the front-end, run `make ui`.
 
-## Installation
+## Install
 
 Run `make install` to make and install Nuke.
