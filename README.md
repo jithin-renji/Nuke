@@ -45,4 +45,8 @@ NOTE: At the moment, Nuke can only be installed and run on Linux.
 
 ## Install
 
-Run `make install` to make and install Nuke.
+Run `sudo make install` to make and install Nuke.
+
+## Uninstall
+
+Run `sudo make uninstall` to make and install Nuke.
