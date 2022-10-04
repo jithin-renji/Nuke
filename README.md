@@ -17,12 +17,14 @@ Options:
     -Y                Don't ask for confirmation (NOT RECOMMENDED)
     -h, --help        Display this help and exit
     -V, --version     Display this version information and exit
+	-p, --pattern     chose pattern(in binary) to loop copy to desired drive
 
 Examples:
     nuke /dev/sdb
     nuke /dev/sdb /dev/sdc
     nuke -z /dev/sdb
     nuke -n 2 /dev/sdb
+	nuke -p 1011 /dev/sdb
 
 NOTE: This program requires root privileges to run.
 ```

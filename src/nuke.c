@@ -35,7 +35,7 @@
 #include "colors.h"
 
 
-int nuke(const char* drv, int only_zero, int nreps, int ask_confirm)
+int nuke(const char* drv, int only_zero, int nreps, int ask_confirm, char *pattern)
 {
     int fd_drv = open(drv, O_RDWR);
 
@@ -60,7 +60,13 @@ int nuke(const char* drv, int only_zero, int nreps, int ask_confirm)
     }
 
     fstat(fd_drv, &drv_stat);
-    bs = drv_stat.st_blksize;
+
+	if(pattern == NULL){
+		bs = drv_stat.st_blksize;
+	} else {
+		bs = (drv_stat.st_blksize / strlen(pattern))*strlen(pattern);
+	}
+
     bytes_drv = 512 * nblocks_drv;
 
     int cnfrm = 1;
@@ -87,6 +93,7 @@ int nuke(const char* drv, int only_zero, int nreps, int ask_confirm)
         printf("Aborted.\n");
     }
 
+    free(pattern);
     return 0;
 }
 
@@ -101,14 +108,10 @@ int confirm(const char* drv)
     char response[512];
     fgets(response, 512, stdin);
 
-    if (strcmp(response, "yes\n") == 0) {
-        return 1;
-    }
-
-    return 0;
+    return ( (strcmp(response, "yes\n") == 0) ? 1 : 0);
 }
 
-void clear_drv(int fd_drv, size_t count, size_t bs, off_t seek_loc)
+void clear_drv(int fd_drv, size_t count, size_t bs, off_t seek_loc, char *pattern)
 {
     lseek(fd_drv, seek_loc, SEEK_SET);
     /*
@@ -120,8 +123,15 @@ void clear_drv(int fd_drv, size_t count, size_t bs, off_t seek_loc)
 
     /* Buffer to store 0's to be written */
     char buf[bs];
-
-    memset(buf, 0, sizeof(buf));
+    if(pattern == NULL){
+    	memset(buf, 0, sizeof(buf));
+    } else {
+    	for(int j=0;j<bs;j+=strlen(pattern))
+    	{
+    		for (int jj = 0; jj < strlen(pattern);jj++)
+    			memcpy( buf+jj+j,  pattern+jj ,  1 );
+    	}
+    }
 
     while (nbytes_written != count) {
         int ret = write(fd_drv, buf, bs);

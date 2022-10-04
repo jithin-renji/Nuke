@@ -24,9 +24,9 @@
 
 #include <sys/types.h>
 
-int nuke(const char* drv, int only_zero, int nreps, int ask_confirm);
+int nuke(const char* drv, int only_zero, int nreps, int ask_confirm,char *pattern);
 int confirm(const char* drv);
-void clear_drv(int fd_drv, size_t count, size_t bs, off_t seek_loc);
+void clear_drv(int fd_drv, size_t count, size_t bs, off_t seek_loc, char *pattern);
 void rand_drv(int fd_drv, size_t count, size_t bs, off_t seek_loc);
 
 #endif    /* NUKE_H */

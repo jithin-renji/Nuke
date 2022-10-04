@@ -32,8 +32,11 @@
 #include "colors.h"
 #include "nuke.h"
 
+#define MAX_PATTERN_CHARS 10
+
 void usage(const char* progname);
 void version(const char* progname);
+int check_binary_pattern(char*);
 
 
 int main(int argc, char** argv)
@@ -48,6 +51,7 @@ int main(int argc, char** argv)
             {"yes",         no_argument,            0, 'Y'},
             {"help",        no_argument,            0, 'h'},
             {"version",     no_argument,            0, 'V'},
+			{"pattern",		required_argument,		0, 'p'},
             {0,             0,                      0,  0}
         };
 
@@ -64,7 +68,10 @@ int main(int argc, char** argv)
         /* If unset, don't ask for confirmation */
         int ask_confirm = 1;
 
-        while ((opt = getopt_long(argc, argv, "z0n:YhV", long_opt,
+        /* if set(malloc-ed), write pattern*/
+        char* pattern = NULL;
+
+        while ((opt = getopt_long(argc, argv, "z0np:YhV", long_opt,
                 &opt_index)) != -1) {
             switch (opt) {
             case '0':
@@ -77,6 +84,16 @@ int main(int argc, char** argv)
             case 'Y':
                 ask_confirm = 0;
                 break;
+            case 'p':
+            	if(strlen(optarg)>=MAX_PATTERN_CHARS)
+            		exit(EXIT_FAILURE);
+            	pattern = (char*) malloc(sizeof(char)*(strlen(optarg)+1));
+            	strncpy(pattern,optarg,strlen(optarg)+1);
+            	if(!(check_binary_pattern(pattern))){
+            		free(pattern);
+            		exit(EXIT_FAILURE);
+            	}
+            	break;
             case 'h':
                 usage(argv[0]);
                 exit(EXIT_SUCCESS);
@@ -110,7 +127,7 @@ int main(int argc, char** argv)
 
         srand(time(NULL));
         while (*drvs != NULL) {
-            int ret = nuke(*drvs, only_zero, nreps, ask_confirm);
+            int ret = nuke(*drvs, only_zero, nreps, ask_confirm,pattern);
             if (ret == -1) {
                 exit(EXIT_FAILURE);
             }
@@ -132,12 +149,14 @@ void usage(const char* progname)
            "\t-n, --repeat\tNumber of times to repeat the process (defaults to 1)\n"
            "\t-Y, --yes\tDon't ask for confirmation " B_WHITE "(NOT RECOMMENDED!)\n" RESET
            "\t-h, --help\tDisplay this help and exit\n"
+           "\t-p, --pattern\tchose pattern(in binary) to loop copy to desired drive\n"
            "\t-v, --version\tDisplay version information and exit\n\n"
            "Examples:\n"
            "\tnuke /dev/sdb\n"
            "\tnuke /dev/sdb /dev/sdc\n"
            "\tnuke -z /dev/sdb\n"
-           "\tnuke -n 2 /dev/sdb\n\n");
+           "\tnuke -n 2 /dev/sdb\n\n"
+		   "\tnuke -p 1011 /dev/sdb\n");
 
     printf("NOTE: This program requires root privileges to run.\n");
 }
@@ -153,4 +172,15 @@ void version(const char* progname)
 
 "Written by Jithin Renji\n", progname
     );
+}
+
+/* check if given string has only binary numbers */
+int check_binary_pattern(char *pat)
+{
+	while(*pat!='\0'){
+		if( *pat !='0' && *pat !='1')
+			return 0;
+		pat++;
+	}
+	return 1;
 }
