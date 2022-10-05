@@ -128,13 +128,12 @@ void clear_drv(int fd_drv, size_t count, size_t bs, off_t seek_loc, char *patter
         	memset(buf, 0, sizeof(buf));
         	pattern_buf_fill(buf,bs, pattern); // fills buf with appropriate bit pattern to fill the next batch
         }
-        printf("first:0x%1x, second:0x%1x, last:0x%1x\n",buf[0],buf[1],buf[bs-1]);
-//        int ret = write(fd_drv, buf, bs);
-//
-//        if (ret == -1) {
-//            perror("");
-//            exit(EXIT_FAILURE);
-//        }
+        int ret = write(fd_drv, buf, bs);
+
+        if (ret == -1) {
+            perror("");
+            exit(EXIT_FAILURE);
+        }
 
         long double percent = (nbytes_written/count) * 100;
 
@@ -166,12 +165,12 @@ void rand_drv(int fd_drv, size_t count, size_t bs, off_t seek_loc)
             buf[i] = rand() % 256;
         }
 
-//        int ret = write(fd_drv, buf, bs);
-//
-//        if (ret == -1) {
-//            perror("");
-//            exit(EXIT_FAILURE);
-//        }
+        int ret = write(fd_drv, buf, bs);
+
+        if (ret == -1) {
+            perror("");
+            exit(EXIT_FAILURE);
+        }
 
         long double percent = (nbytes_written/count) * 100;
 
