@@ -34,9 +34,9 @@
 #include "nuke.h"
 #include "colors.h"
 
-
 int nuke(const char* drv, int only_zero, int nreps, int ask_confirm, char *pattern)
 {
+	pattern_counter = 0; // for every new drive, zero the counter.
     int fd_drv = open(drv, O_RDWR);
 
     /* Stats */
@@ -61,11 +61,8 @@ int nuke(const char* drv, int only_zero, int nreps, int ask_confirm, char *patte
 
     fstat(fd_drv, &drv_stat);
 
-	if(pattern == NULL){
-		bs = drv_stat.st_blksize;
-	} else {
-		bs = (drv_stat.st_blksize / strlen(pattern))*strlen(pattern);
-	}
+
+	bs = drv_stat.st_blksize;
 
     bytes_drv = 512 * nblocks_drv;
 
@@ -82,11 +79,11 @@ int nuke(const char* drv, int only_zero, int nreps, int ask_confirm, char *patte
             if (nreps != 1) {
                 printf(B_CYAN "STAGE %d:\n" RESET, i + 1);
             }
-            clear_drv (fd_drv, bytes_drv, bs, seek_loc);
+            clear_drv (fd_drv, bytes_drv, bs, seek_loc,pattern);
 
             if (!only_zero) {
                 rand_drv (fd_drv, bytes_drv, bs, seek_loc);
-                clear_drv (fd_drv, bytes_drv, bs, seek_loc);
+                clear_drv (fd_drv, bytes_drv, bs, seek_loc,pattern);
             }
         }
     } else {
@@ -122,24 +119,22 @@ void clear_drv(int fd_drv, size_t count, size_t bs, off_t seek_loc, char *patter
     long double nbytes_written = 0;
 
     /* Buffer to store 0's to be written */
-    char buf[bs];
-    if(pattern == NULL){
-    	memset(buf, 0, sizeof(buf));
-    } else {
-    	for(int j=0;j<bs;j+=strlen(pattern))
-    	{
-    		for (int jj = 0; jj < strlen(pattern);jj++)
-    			memcpy( buf+jj+j,  pattern+jj ,  1 );
-    	}
-    }
+    unsigned char buf[bs];
+	memset(buf, 0, sizeof(buf));
 
     while (nbytes_written != count) {
-        int ret = write(fd_drv, buf, bs);
-
-        if (ret == -1) {
-            perror("");
-            exit(EXIT_FAILURE);
+        if(pattern != NULL)
+        {
+        	memset(buf, 0, sizeof(buf));
+        	pattern_buf_fill(buf,bs, pattern); // fills buf with appropriate bit pattern to fill the next batch
         }
+        printf("first:0x%1x, second:0x%1x, last:0x%1x\n",buf[0],buf[1],buf[bs-1]);
+//        int ret = write(fd_drv, buf, bs);
+//
+//        if (ret == -1) {
+//            perror("");
+//            exit(EXIT_FAILURE);
+//        }
 
         long double percent = (nbytes_written/count) * 100;
 
@@ -171,12 +166,12 @@ void rand_drv(int fd_drv, size_t count, size_t bs, off_t seek_loc)
             buf[i] = rand() % 256;
         }
 
-        int ret = write(fd_drv, buf, bs);
-
-        if (ret == -1) {
-            perror("");
-            exit(EXIT_FAILURE);
-        }
+//        int ret = write(fd_drv, buf, bs);
+//
+//        if (ret == -1) {
+//            perror("");
+//            exit(EXIT_FAILURE);
+//        }
 
         long double percent = (nbytes_written/count) * 100;
 
@@ -190,4 +185,30 @@ void rand_drv(int fd_drv, size_t count, size_t bs, off_t seek_loc)
         nbytes_written += bs;
     }
     printf("\n");
+}
+
+/* at the end of this function, buf will have looped bit pattern of pattern, and pattern_counter will save the last place
+ * we copied from the string*/
+void pattern_buf_fill(unsigned char * buf,int bs, char * pattern)
+{
+	unsigned char bit_mask = 0x80;
+	unsigned int j = 0;
+
+	while(j!=bs){
+
+		if(pattern[pattern_counter] == '1')
+			buf[j] |= bit_mask;
+		pattern_counter++;
+
+		if (bit_mask == 0x01){
+			bit_mask = 0x80; //reset mask bit after looping throught 8 bits
+			j++; //next char of buf
+		} else {
+			bit_mask /=2; // change next bit
+		}
+
+		if(pattern_counter == strlen(pattern))
+			pattern_counter = 0;
+	}
+
 }

@@ -24,9 +24,12 @@
 
 #include <sys/types.h>
 
+static int pattern_counter; // save last place we copied the bit string from user for every buf copy to drive.
+
 int nuke(const char* drv, int only_zero, int nreps, int ask_confirm,char *pattern);
 int confirm(const char* drv);
 void clear_drv(int fd_drv, size_t count, size_t bs, off_t seek_loc, char *pattern);
 void rand_drv(int fd_drv, size_t count, size_t bs, off_t seek_loc);
+void pattern_buf_fill(unsigned char *,int ,char *);
 
 #endif    /* NUKE_H */

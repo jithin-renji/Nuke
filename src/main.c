@@ -32,7 +32,7 @@
 #include "colors.h"
 #include "nuke.h"
 
-#define MAX_PATTERN_CHARS 10
+#define MAX_PATTERN_CHARS 8
 
 void usage(const char* progname);
 void version(const char* progname);
@@ -85,7 +85,7 @@ int main(int argc, char** argv)
                 ask_confirm = 0;
                 break;
             case 'p':
-            	if(strlen(optarg)>=MAX_PATTERN_CHARS)
+            	if(strlen(optarg)>MAX_PATTERN_CHARS)
             		exit(EXIT_FAILURE);
             	pattern = (char*) malloc(sizeof(char)*(strlen(optarg)+1));
             	strncpy(pattern,optarg,strlen(optarg)+1);
