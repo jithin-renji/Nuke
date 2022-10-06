@@ -133,8 +133,8 @@ int main(int argc, char** argv)
             }
             ++drvs;
         }
+        free(pattern);
     }
-
     return 0;
 }
 

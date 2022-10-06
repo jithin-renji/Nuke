@@ -89,8 +89,6 @@ int nuke(const char* drv, int only_zero, int nreps, int ask_confirm, char *patte
     } else {
         printf("Aborted.\n");
     }
-
-    free(pattern);
     return 0;
 }
 
