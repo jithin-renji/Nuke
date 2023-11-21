@@ -23,7 +23,7 @@
  */
 
 #ifndef linux
-#error "Nuke is currently only supported on Linux."
+    #error "Nuke is currently only supported on Linux."
 #endif
 
 #include <stdio.h>
