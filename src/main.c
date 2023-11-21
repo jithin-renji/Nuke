@@ -22,6 +22,10 @@
  *    along with Nuke.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef linux
+#error "Nuke is currently only supported on Linux."
+#endif
+
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
